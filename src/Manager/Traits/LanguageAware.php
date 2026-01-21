@@ -15,12 +15,12 @@ trait LanguageAware
     /**
      * @var string
      */
-    protected $language;
+    protected string $language;
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getLanguage()
+    public function getLanguage(): string
     {
         return $this->language;
     }
@@ -30,7 +30,7 @@ trait LanguageAware
      *
      * @return LanguageAware
      */
-    public function setLanguage($language)
+    public function setLanguage(mixed $language): static
     {
         $this->language = $language;
 

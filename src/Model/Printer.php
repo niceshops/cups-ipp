@@ -16,17 +16,17 @@ class Printer implements PrinterInterface
     /**
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * @var string
      */
-    protected $status;
+    protected string $status;
 
     /**
      * @return null|string
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }

@@ -15,7 +15,7 @@ trait CharsetAware
     /**
      * @var string
      */
-    protected $charset;
+    protected string $charset;
 
     /**
      * @return string
@@ -30,7 +30,7 @@ trait CharsetAware
      *
      * @return CharsetAware
      */
-    public function setCharset(string $charset)
+    public function setCharset(string $charset): static
     {
         $this->charset = $charset;
 

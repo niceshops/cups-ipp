@@ -2,8 +2,8 @@
 
 namespace Smalot\Cups\Model\Traits;
 
-use Smalot\Cups\Model\JobInterface;
-use Smalot\Cups\Model\PrinterInterface;
+use Smalot\Cups\Model\Job;
+use Smalot\Cups\Model\Printer;
 
 /**
  * Trait AttributeAware
@@ -16,7 +16,7 @@ trait AttributeAware
     /**
      * @var array
      */
-    protected $attributes = [];
+    protected array $attributes = [];
 
     /**
      * @return array
@@ -30,7 +30,7 @@ trait AttributeAware
      * @param string $name
      * @param mixed  $values
      */
-    public function setAttribute(string $name, $values)
+    public function setAttribute(string $name, mixed $values): void
     {
         if (!is_array($values)) {
             $values = [$values];
@@ -42,7 +42,7 @@ trait AttributeAware
     /**
      * @param array $attributes
      *
-     * @return JobInterface|PrinterInterface
+     * @return Job|Printer|AttributeAware
      */
     public function setAttributes(array $attributes): self
     {
@@ -57,7 +57,7 @@ trait AttributeAware
      * @param string $name
      * @param mixed  $value
      */
-    public function addAttribute(string $name, $value)
+    public function addAttribute(string $name, mixed $value): void
     {
         $this->attributes[$name][] = $value;
     }
@@ -65,7 +65,7 @@ trait AttributeAware
     /**
      * @param string $name
      */
-    public function removeAttribute(string $name)
+    public function removeAttribute(string $name): void
     {
         unset($this->attributes[$name]);
     }

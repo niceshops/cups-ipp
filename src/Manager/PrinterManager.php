@@ -25,7 +25,7 @@ class PrinterManager extends ManagerAbstract
      * @throws ClientExceptionInterface
      * @throws CupsException
      */
-    public function findByUri(string $uri)
+    public function findByUri(string $uri): false|Printer
     {
         $printer = new Printer();
         $printer->setUri($uri);
@@ -46,7 +46,7 @@ class PrinterManager extends ManagerAbstract
      * @throws ClientExceptionInterface
      * @throws CupsException
      */
-    public function findByName(string $name)
+    public function findByName(string $name): array|false
     {
         $all_printers = $this->getList();
         $printers = [];
@@ -89,7 +89,7 @@ class PrinterManager extends ManagerAbstract
      * @throws ClientExceptionInterface
      * @throws CupsException
      */
-    public function getDefault()
+    public function getDefault(): ?Printer
     {
         $request = $this->prepareGetDefaultRequest(['all']);
         $response = $this->client->sendRequest($request);

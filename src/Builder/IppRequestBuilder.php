@@ -10,7 +10,7 @@ class IppRequestBuilder
     /**
      * @var string[]
      */
-    private $strings = [];
+    private array $strings = [];
 
     /**
      * @param string $version

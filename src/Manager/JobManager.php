@@ -130,7 +130,7 @@ class JobManager extends ManagerAbstract
      */
     public function update(JobInterface $job, array $update = [], array $delete = []): bool
     {
-        $request = $this->prepareUpdateRequest($job, $update, $delete);
+        $request = $this->prepareUpdateRequest($job, $update);
         $response = $this->client->sendRequest($request);
         $result = $this->parseResponse($response);
 
@@ -320,7 +320,7 @@ class JobManager extends ManagerAbstract
                 case 'all':
                     break;
                 default:
-                    trigger_error('Invalid attribute group: "'.$attributes_group.'"', E_USER_NOTICE);
+                    trigger_error('Invalid attribute group: "'.$attributes_group.'"');
                     $attributes_group = '';
                     break;
             }
@@ -337,12 +337,11 @@ class JobManager extends ManagerAbstract
     /**
      * @param JobInterface $job
      * @param array        $update
-     * @param array        $delete
      *
      * @return Request
      * @throws CupsException
      */
-    protected function prepareUpdateRequest(JobInterface $job, array $update = [], array $delete = []): Request
+    protected function prepareUpdateRequest(JobInterface $job, array $update = []): Request
     {
         $charset = $this->buildCharset();
         $language = $this->buildLanguage();
@@ -579,13 +578,13 @@ class JobManager extends ManagerAbstract
 
     /**
      * @param JobInterface $job
-     * @param array        $part
-     * @param bool         $is_last
+     * @param array $part
+     * @param bool $is_last
      *
      * @return Request
      * @throws CupsException
      */
-    protected function prepareSendPartRequest(JobInterface $job, $part, $is_last = false): Request
+    protected function prepareSendPartRequest(JobInterface $job, array $part, bool $is_last = false): Request
     {
         $request_id = $this->buildRequestId();
         $charset = $this->buildCharset();

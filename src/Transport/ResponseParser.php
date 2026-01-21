@@ -2,6 +2,7 @@
 
 namespace Smalot\Cups\Transport;
 
+use DateTime;
 use Psr\Http\Message\ResponseInterface;
 use Smalot\Cups\Model\Operations;
 
@@ -16,57 +17,57 @@ class ResponseParser
     /**
      * @var string
      */
-    protected $content = '';
+    protected string $content = '';
 
     /**
      * @var array
      */
-    protected $body = [];
+    protected array $body = [];
 
     /**
      * @var int
      */
-    protected $index = 0;
+    protected int $index = 0;
 
     /**
      * @var int
      */
-    protected $offset = 0;
+    protected int $offset = 0;
 
     /**
      * @var mixed
      */
-    protected $collection; // RFC3382
+    protected mixed $collection; // RFC3382
 
     /**
      * @var array
      */
-    protected $collection_key = []; // RFC3382
+    protected array $collection_key = []; // RFC3382
 
     /**
      * @var int
      */
-    protected $collection_depth = -1; // RFC3382
+    protected int $collection_depth = -1; // RFC3382
 
     /**
      * @var bool
      */
-    protected $end_collection = false; // RFC3382
+    protected bool $end_collection = false; // RFC3382
 
     /**
      * @var array
      */
-    protected $collection_nbr = []; // RFC3382
+    protected array $collection_nbr = []; // RFC3382
 
     /**
      * @var string
      */
-    protected $attribute_name = '';
+    protected string $attribute_name = '';
 
     /**
      * @var string
      */
-    protected $last_attribute_name = '';
+    protected string $last_attribute_name = '';
 
     /**
      * @param ResponseInterface $response
@@ -91,7 +92,7 @@ class ResponseParser
     /**
      *
      */
-    protected function reset()
+    protected function reset(): void
     {
         $this->offset = 0;
         $this->index = 0;
@@ -142,7 +143,7 @@ class ResponseParser
     /**
      * @return string
      */
-    protected function parseStatusCode()
+    protected function parseStatusCode(): false|string
     {
         $status_code = (ord($this->content[$this->offset]) * 256) + ord($this->content[$this->offset + 1]);
         $status = 'NOT PARSED';
@@ -307,7 +308,7 @@ class ResponseParser
     /**
      * @return int
      */
-    protected function parseRequestID()
+    protected function parseRequestID(): float|int
     {
         $request_id = $this->interpretInteger(substr($this->content, $this->offset, 4));
         $this->offset += 4;
@@ -372,7 +373,7 @@ class ResponseParser
         return $this->body;
     }
 
-    protected function readAttribute($attributes_type)
+    protected function readAttribute($attributes_type): void
     {
         $tag = ord($this->content[$this->offset]);
 
@@ -556,7 +557,7 @@ class ResponseParser
         return $tag;
     }
 
-    protected function readCollectionValue(&$output)
+    protected function readCollectionValue(&$output): bool
     {
         if (isset($this->content[$this->offset + 1])) {
             $length = ord($this->content[$this->offset]) * 256 + ord($this->content[$this->offset + 1]);
@@ -582,10 +583,8 @@ class ResponseParser
      *
      * @return void
      */
-    protected function readCollection($attributes_type, $j)
+    protected function readCollection($attributes_type, $j): void
     {
-
-        dd('her e');
         $collection_name = $attribute_name = $collection_value = $value = '';
         if (!$this->readCollectionValue($collection_name)) {
             return;
@@ -639,7 +638,7 @@ class ResponseParser
         $this->body[$attributes_type][$j]['value'] = $this->collection;
     }
 
-    protected function readAttributeName($attributes_type, $j, $write = 1)
+    protected function readAttributeName($attributes_type, $j, $write = 1): false|string
     {
         $name_length = ord($this->content[$this->offset]) * 256 + ord($this->content[$this->offset + 1]);
         $this->offset += 2;
@@ -660,7 +659,7 @@ class ResponseParser
         return $name;
     }
 
-    protected function readValue($attributes_type, $j, $write = 1)
+    protected function readValue($attributes_type, $j, $write = 1): false|string
     {
         $value_length = ord($this->content[$this->offset]) * 256 + ord($this->content[$this->offset + 1]);
         $this->offset += 2;
@@ -721,7 +720,7 @@ class ResponseParser
         return $value;
     }
 
-    protected function interpretInteger($value)
+    protected function interpretInteger($value): float|int
     {
         // They are _signed_ integers.
         $value_parsed = 0;
@@ -770,7 +769,7 @@ class ResponseParser
           $minutes_from_utc
         );
 
-        $datetime = new \DateTime($date);
+        $datetime = new DateTime($date);
 
         return $datetime->format('c');
     }
@@ -781,7 +780,7 @@ class ResponseParser
      *
      * @return array|mixed|string
      */
-    protected function interpretEnum($attribute_name, $value)
+    protected function interpretEnum($attribute_name, $value): mixed
     {
         $value_parsed = $this->interpretInteger($value);
 
@@ -954,201 +953,72 @@ class ResponseParser
 
     protected function interpretFinishings($value_parsed): string
     {
-        switch ($value_parsed) {
-            case 3:
-                $value = 'none';
-                break;
-            case 4:
-                $value = 'staple';
-                break;
-            case 5:
-                $value = 'punch';
-                break;
-            case 6:
-                $value = 'cover';
-                break;
-            case 7:
-                $value = 'bind';
-                break;
-            case 8:
-                $value = 'saddle-stitch';
-                break;
-            case 9:
-                $value = 'edge-stitch';
-                break;
-            case 20:
-                $value = 'staple-top-left';
-                break;
-            case 21:
-                $value = 'staple-bottom-left';
-                break;
-            case 22:
-                $value = 'staple-top-right';
-                break;
-            case 23:
-                $value = 'staple-bottom-right';
-                break;
-            case 24:
-                $value = 'edge-stitch-left';
-                break;
-            case 25:
-                $value = 'edge-stitch-top';
-                break;
-            case 26:
-                $value = 'edge-stitch-right';
-                break;
-            case 27:
-                $value = 'edge-stitch-bottom';
-                break;
-            case 28:
-                $value = 'staple-dual-left';
-                break;
-            case 29:
-                $value = 'staple-dual-top';
-                break;
-            case 30:
-                $value = 'staple-dual-right';
-                break;
-            case 31:
-                $value = 'staple-dual-bottom';
-                break;
-            case 32:
-                $value = 'staple-triple-left';
-                break;
-            case 33:
-                $value = 'staple-triple-top';
-                break;
-            case 34:
-                $value = 'staple-triple-right';
-                break;
-            case 35:
-                $value = 'staple-triple-bottom';
-                break;
-            case 50:
-                $value = 'bind-left';
-                break;
-            case 51:
-                $value = 'bind-top';
-                break;
-            case 52:
-                $value = 'bind-right';
-                break;
-            case 53:
-                $value = 'bind-bottom';
-                break;
-            case 60:
-                $value = 'trim-after-pages';
-                break;
-            case 61:
-                $value = 'trim-after-documents';
-                break;
-            case 62:
-                $value = 'trim-after-copies';
-                break;
-            case 63:
-                $value = 'trim-after-job';
-                break;
-            case 70:
-                $value = 'punch-top-left';
-                break;
-            case 71:
-                $value = 'punch-bottom-left';
-                break;
-            case 72:
-                $value = 'punch-top-right';
-                break;
-            case 73:
-                $value = 'punch-bottom-right';
-                break;
-            case 74:
-                $value = 'punch-dual-left';
-                break;
-            case 75:
-                $value = 'punch-dual-top';
-                break;
-            case 76:
-                $value = 'punch-dual-right';
-                break;
-            case 77:
-                $value = 'punch-dual-bottom';
-                break;
-            case 78:
-                $value = 'punch-triple-left';
-                break;
-            case 79:
-                $value = 'punch-triple-top';
-                break;
-            case 80:
-                $value = 'punch-triple-right';
-                break;
-            case 81:
-                $value = 'punch-triple-bottom';
-                break;
-            case 82:
-                $value = 'punch-quad-left';
-                break;
-            case 83:
-                $value = 'punch-quad-top';
-                break;
-            case 84:
-                $value = 'punch-quad-right';
-                break;
-            case 85:
-                $value = 'punch-quad-bottom';
-                break;
-            case 86:
-                $value = 'punch-multiple-left';
-                break;
-            case 87:
-                $value = 'punch-multiple-top';
-                break;
-            case 88:
-                $value = 'punch-multiple-right';
-                break;
-            case 89:
-                $value = 'punch-multiple-bottom';
-                break;
-            case 90:
-                $value = 'fold-accordion';
-                break;
-            case 91:
-                $value = 'fold-double-gate';
-                break;
-            case 92:
-                $value = 'fold-gate';
-                break;
-            case 93:
-                $value = 'fold-half';
-                break;
-            case 94:
-                $value = 'fold-half-z';
-                break;
-            case 95:
-                $value = 'fold-left-gate';
-                break;
-            case 96:
-                $value = 'fold-letter';
-                break;
-            case 97:
-                $value = 'fold-parallel';
-                break;
-            case 98:
-                $value = 'fold-poster';
-                break;
-            case 99:
-                $value = 'fold-right-gate';
-                break;
-            case 100:
-                $value = 'fold-z';
-                break;
-            case 101:
-                $value = 'fold-engineering-z';
-                break;
-            default:
-                $value = sprintf('Unknown(IETF standards track "finishing" reserved): 0x%x', $value_parsed);
-        }
-
-        return $value;
+        return match ($value_parsed) {
+            3 => 'none',
+            4 => 'staple',
+            5 => 'punch',
+            6 => 'cover',
+            7 => 'bind',
+            8 => 'saddle-stitch',
+            9 => 'edge-stitch',
+            20 => 'staple-top-left',
+            21 => 'staple-bottom-left',
+            22 => 'staple-top-right',
+            23 => 'staple-bottom-right',
+            24 => 'edge-stitch-left',
+            25 => 'edge-stitch-top',
+            26 => 'edge-stitch-right',
+            27 => 'edge-stitch-bottom',
+            28 => 'staple-dual-left',
+            29 => 'staple-dual-top',
+            30 => 'staple-dual-right',
+            31 => 'staple-dual-bottom',
+            32 => 'staple-triple-left',
+            33 => 'staple-triple-top',
+            34 => 'staple-triple-right',
+            35 => 'staple-triple-bottom',
+            50 => 'bind-left',
+            51 => 'bind-top',
+            52 => 'bind-right',
+            53 => 'bind-bottom',
+            60 => 'trim-after-pages',
+            61 => 'trim-after-documents',
+            62 => 'trim-after-copies',
+            63 => 'trim-after-job',
+            70 => 'punch-top-left',
+            71 => 'punch-bottom-left',
+            72 => 'punch-top-right',
+            73 => 'punch-bottom-right',
+            74 => 'punch-dual-left',
+            75 => 'punch-dual-top',
+            76 => 'punch-dual-right',
+            77 => 'punch-dual-bottom',
+            78 => 'punch-triple-left',
+            79 => 'punch-triple-top',
+            80 => 'punch-triple-right',
+            81 => 'punch-triple-bottom',
+            82 => 'punch-quad-left',
+            83 => 'punch-quad-top',
+            84 => 'punch-quad-right',
+            85 => 'punch-quad-bottom',
+            86 => 'punch-multiple-left',
+            87 => 'punch-multiple-top',
+            88 => 'punch-multiple-right',
+            89 => 'punch-multiple-bottom',
+            90 => 'fold-accordion',
+            91 => 'fold-double-gate',
+            92 => 'fold-gate',
+            93 => 'fold-half',
+            94 => 'fold-half-z',
+            95 => 'fold-left-gate',
+            96 => 'fold-letter',
+            97 => 'fold-parallel',
+            98 => 'fold-poster',
+            99 => 'fold-right-gate',
+            100 => 'fold-z',
+            101 => 'fold-engineering-z',
+            default => sprintf('Unknown(IETF standards track "finishing" reserved): 0x%x', $value_parsed),
+        };
     }
 
     protected function interpretOperationsSupported($value_parsed, $value): string
@@ -1188,141 +1058,52 @@ class ResponseParser
 
     protected function interpretPowerState($value_parsed): string
     {
-        switch ($value_parsed) {
-            case 20:
-                $value = 'on';
-                break;
-            case 21:
-                $value = 'on-vendor1';
-                break;
-            case 22:
-                $value = 'on-vendor2';
-                break;
-            case 23:
-                $value = 'on-vendor3';
-                break;
-            case 24:
-                $value = 'on-vendor4';
-                break;
-            case 25:
-                $value = 'on-vendor5';
-                break;
-            case 30:
-                $value = 'standby';
-                break;
-            case 31:
-                $value = 'standby-vendor1';
-                break;
-            case 32:
-                $value = 'standby-vendor2';
-                break;
-            case 33:
-                $value = 'standby-vendor3';
-                break;
-            case 34:
-                $value = 'standby-vendor4';
-                break;
-            case 35:
-                $value = 'standby-vendor5';
-                break;
-            case 40:
-                $value = 'suspend';
-                break;
-            case 41:
-                $value = 'suspend-vendor1';
-                break;
-            case 42:
-                $value = 'suspend-vendor2';
-                break;
-            case 43:
-                $value = 'suspend-vendor3';
-                break;
-            case 44:
-                $value = 'suspend-vendor4';
-                break;
-            case 45:
-                $value = 'suspend-vendor5';
-                break;
-            case 50:
-                $value = 'reset-soft';
-                break;
-            case 60:
-                $value = 'off-hard';
-                break;
-            case 70:
-                $value = 'hibernate';
-                break;
-            case 71:
-                $value = 'hibernate-vendor1';
-                break;
-            case 72:
-                $value = 'hibernate-vendor2';
-                break;
-            case 73:
-                $value = 'hibernate-vendor3';
-                break;
-            case 74:
-                $value = 'hibernate-vendor4';
-                break;
-            case 75:
-                $value = 'hibernate-vendor5';
-                break;
-            case 80:
-                $value = 'off-soft';
-                break;
-            case 81:
-                $value = 'off-soft-vendor1';
-                break;
-            case 82:
-                $value = 'off-soft-vendor2';
-                break;
-            case 83:
-                $value = 'off-soft-vendor3';
-                break;
-            case 84:
-                $value = 'off-soft-vendor4';
-                break;
-            case 85:
-                $value = 'off-soft-vendor5';
-                break;
-            case 90:
-                $value = 'reset-hard';
-                break;
-            case 100:
-                $value = 'reset-mbr';
-                break;
-            case 110:
-                $value = 'reset-nmi';
-                break;
-            case 120:
-                $value = 'off-soft-graceful';
-                break;
-            case 130:
-                $value = 'off-hard-graceful';
-                break;
-            case 140:
-                $value = 'reset-mbr-graceful';
-                break;
-            case 150:
-                $value = 'reset-soft-graceful';
-                break;
-            case 160:
-                $value = 'reset-hard-graceful';
-                break;
-            case 170:
-                $value = 'reset-init';
-                break;
-            case 180:
-                $value = 'not-applicable';
-                break;
-            case 190:
-                $value = 'no-change';
-                break;
-            default:
-                $value = sprintf('Unknown "power-state" (should not exists): 0x%x', $value_parsed);
-        }
-
-        return $value;
+        return match ($value_parsed) {
+            20 => 'on',
+            21 => 'on-vendor1',
+            22 => 'on-vendor2',
+            23 => 'on-vendor3',
+            24 => 'on-vendor4',
+            25 => 'on-vendor5',
+            30 => 'standby',
+            31 => 'standby-vendor1',
+            32 => 'standby-vendor2',
+            33 => 'standby-vendor3',
+            34 => 'standby-vendor4',
+            35 => 'standby-vendor5',
+            40 => 'suspend',
+            41 => 'suspend-vendor1',
+            42 => 'suspend-vendor2',
+            43 => 'suspend-vendor3',
+            44 => 'suspend-vendor4',
+            45 => 'suspend-vendor5',
+            50 => 'reset-soft',
+            60 => 'off-hard',
+            70 => 'hibernate',
+            71 => 'hibernate-vendor1',
+            72 => 'hibernate-vendor2',
+            73 => 'hibernate-vendor3',
+            74 => 'hibernate-vendor4',
+            75 => 'hibernate-vendor5',
+            80 => 'off-soft',
+            81 => 'off-soft-vendor1',
+            82 => 'off-soft-vendor2',
+            83 => 'off-soft-vendor3',
+            84 => 'off-soft-vendor4',
+            85 => 'off-soft-vendor5',
+            90 => 'reset-hard',
+            100 => 'reset-mbr',
+            110 => 'reset-nmi',
+            120 => 'off-soft-graceful',
+            130 => 'off-hard-graceful',
+            140 => 'reset-mbr-graceful',
+            150 => 'reset-soft-graceful',
+            160 => 'reset-hard-graceful',
+            170 => 'reset-init',
+            180 => 'not-applicable',
+            190 => 'no-change',
+            default => sprintf('Unknown "power-state" (should not exists): 0x%x', $value_parsed),
+        };
     }
 
     protected function interpretDocumentJobState($value_parsed, $value): string
@@ -1490,23 +1271,12 @@ class ResponseParser
 
     protected function interpretClientType($value_parsed): string
     {
-        switch ($value_parsed) {
-            case 0x03:
-                $value = 'application';
-                break;
-            case 0x04:
-                $value = 'operating-system';
-                break;
-            case 0x05:
-                $value = 'driver';
-                break;
-            case 0x06:
-                $value = 'other';
-                break;
-            default:
-                $value = sprintf('Unknown(IETF standards track "client-type" reserved): 0x%x', $value_parsed);
-        }
-
-        return $value;
+        return match ($value_parsed) {
+            0x03 => 'application',
+            0x04 => 'operating-system',
+            0x05 => 'driver',
+            0x06 => 'other',
+            default => sprintf('Unknown(IETF standards track "client-type" reserved): 0x%x', $value_parsed),
+        };
     }
 }

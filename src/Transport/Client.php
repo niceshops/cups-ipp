@@ -21,40 +21,40 @@ use Smalot\Cups\CupsException;
  */
 class Client implements ClientInterface
 {
-    const SOCKET_URL = 'unix:///var/run/cups/cups.sock';
+    const string SOCKET_URL = 'unix:///var/run/cups/cups.sock';
 
-    const AUTHTYPE_BASIC = 'basic';
+    const string AUTHTYPE_BASIC = 'basic';
 
-    const AUTHTYPE_DIGEST = 'digest';
+    const string AUTHTYPE_DIGEST = 'digest';
 
     /**
      * @var ClientInterface
      */
-    protected $http_client;
+    protected ClientInterface|PluginClient $http_client;
 
     /**
      * @var string
      */
-    protected $auth_type;
+    protected string $auth_type;
 
     /**
      * @var string
      */
-    protected $username;
+    protected string $username;
 
     /**
      * @var string
      */
-    protected $password;
+    protected string $password;
 
     /**
      * Client constructor.
      *
-     * @param null|string $username
-     * @param null|string $password
+     * @param string|null $username
+     * @param string|null $password
      * @param array       $socket_client_options
      */
-    public function __construct(string $username = null, string $password = null, array $socket_client_options = [])
+    public function __construct(?string $username = null, ?string $password = null, array $socket_client_options = [])
     {
         if (!is_null($username)) {
             $this->username = $username;

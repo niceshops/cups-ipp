@@ -1,7 +1,7 @@
 # Cups IPP
 
 CUPS Implementation of IPP - PHP Client API
-#### *(another fork of the awesome [smalot/cups-ipp](https://github.com/smalot/cups-ipp), updated to use GuzzleHttp\Client, supports PHP >= 7.2.5)*
+#### *(another fork of the awesome [smalot/cups-ipp](https://github.com/smalot/cups-ipp), updated to use GuzzleHttp\Client, supports PHP >= 8.3)*
 
 CUPS (Common Unix Printing System) is a modular printing system for Unix-like computer operating systems which allows a computer to act as a print server. A computer running CUPS is a host that can accept print jobs from client computers, process them, and send them to the appropriate printer.
 

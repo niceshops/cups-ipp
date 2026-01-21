@@ -15,7 +15,7 @@ trait UsernameAware
     /**
      * @var string
      */
-    protected $username;
+    protected string $username;
 
     /**
      * @return string
@@ -30,7 +30,7 @@ trait UsernameAware
      *
      * @return UsernameAware
      */
-    public function setUsername(string $username)
+    public function setUsername(string $username): static
     {
         $this->username = $username;
 

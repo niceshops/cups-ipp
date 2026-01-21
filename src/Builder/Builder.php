@@ -16,34 +16,35 @@ class Builder
     /**
      * @var array
      */
-    protected $tags_types = [];
+    protected array $tags_types = [];
 
     /**
      * @var array
      */
-    protected $operation_tags = [];
+    protected array $operation_tags = [];
 
     /**
      * @var array
      */
-    protected $job_tags = [];
+    protected array $job_tags = [];
 
     /**
      * @var array
      */
-    protected $printer_tags = [];
+    protected array $printer_tags = [];
 
     /**
      * @var bool
      */
-    protected $pass_unknown_as_string = false;
+    protected bool $pass_unknown_as_string = false;
 
     /**
      * Builder constructor.
      *
-     * @param null|string $path
+     * @param string|null $path
+     * @param bool $pass_unknown_as_string
      */
-    public function __construct(string $path = null, bool $pass_unknown_as_string = false)
+    public function __construct(?string $path = null, bool $pass_unknown_as_string = false)
     {
         if (is_null($path)) {
             $path = __DIR__.'/../../config/';
@@ -57,7 +58,7 @@ class Builder
     /**
      * @param string $path
      */
-    protected function init(string $path)
+    protected function init(string $path): void
     {
         $parser = new Parser();
 
@@ -177,7 +178,7 @@ class Builder
      * @return string
      * @throws CupsException
      */
-    public function buildProperty(string $name, $values, bool $empty_if_missing = false): string
+    public function buildProperty(string $name, mixed $values, bool $empty_if_missing = false): string
     {
         if (!is_array($values)) {
             $values = [$values];
@@ -209,9 +210,9 @@ class Builder
                         break;
 
                     case 'resolution':
-                        if (preg_match('/dpi/', $value)) {
+                        if (str_contains($value, 'dpi')) {
                             $unit = chr(0x3);
-                        } elseif (preg_match('/dpc/', $value)) {
+                        } elseif (str_contains($value, 'dpc')) {
                             $unit = chr(0x4);
                         } else {
                             $unit = '';
@@ -264,7 +265,7 @@ class Builder
      * @return array
      * @throws CupsException
      */
-    public function getTypeFromProperty(string $name)
+    public function getTypeFromProperty(string $name): array
     {
         foreach (['operation', 'job', 'printer'] as $prefix) {
             if (!empty($this->{$prefix.'_tags'}[$name])) {

@@ -14,70 +14,70 @@ class Job implements JobInterface
     use Traits\AttributeAware;
     use Traits\UriAware;
 
-    const CONTENT_FILE = 'file';
+    const string CONTENT_FILE = 'file';
 
-    const CONTENT_TEXT = 'text';
+    const string CONTENT_TEXT = 'text';
 
-    const SIDES_TWO_SIDED_LONG_EDGE = 'two-sided-long-edge';
+    const string SIDES_TWO_SIDED_LONG_EDGE = 'two-sided-long-edge';
 
-    const SIDES_TWO_SIDED_SHORT_EDGE = 'two-sided-short-edge';
+    const string SIDES_TWO_SIDED_SHORT_EDGE = 'two-sided-short-edge';
 
-    const SIDES_ONE_SIDED = 'one-sided';
+    const string SIDES_ONE_SIDED = 'one-sided';
 
     /**
      * @var null|int
      */
-    protected $id = null;
+    protected ?int $id = null;
 
     /**
      * @var string
      */
-    protected $printer_uri;
+    protected string $printer_uri;
 
     /**
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * @var string
      */
-    protected $username;
+    protected string $username;
 
     /**
      * @var string
      */
-    protected $page_ranges = 'all';
+    protected string $page_ranges = 'all';
 
     /**
      * @var int
      */
-    protected $copies;
+    protected int $copies;
 
     /**
      * @var string
      */
-    protected $sides = self::SIDES_ONE_SIDED;
+    protected string $sides = self::SIDES_ONE_SIDED;
 
     /**
      * @var int
      */
-    protected $fidelity = 0;
+    protected int $fidelity = 0;
 
     /**
      * @var array
      */
-    protected $content = [];
+    protected array $content = [];
 
     /**
      * @var string
      */
-    protected $state;
+    protected string $state;
 
     /**
      * @var string
      */
-    protected $state_reason;
+    protected string $state_reason;
 
     /**
      * Job constructor.
@@ -91,7 +91,7 @@ class Job implements JobInterface
     /**
      * @return null|int
      */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -257,9 +257,9 @@ class Job implements JobInterface
     }
 
     /**
-     * @param string      $filename
-     * @param string      $name
-     * @param null|string $mime_type
+     * @param string $filename
+     * @param string $name
+     * @param string $mime_type
      *
      * @return Job
      */

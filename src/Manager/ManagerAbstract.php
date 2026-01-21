@@ -25,22 +25,22 @@ class ManagerAbstract
     /**
      * @var ClientInterface;
      */
-    protected $client;
+    protected ClientInterface $client;
 
     /**
      * @var Builder
      */
-    protected $builder;
+    protected Builder $builder;
 
     /**
      * @var ResponseParser
      */
-    protected $response_parser;
+    protected ResponseParser $response_parser;
 
     /**
      * @var string
      */
-    protected $version;
+    protected string $version;
 
     /**
      * ManagerAbstract constructor.
@@ -70,7 +70,7 @@ class ManagerAbstract
      * @return string
      * @throws CupsException
      */
-    public function buildProperty(string $name, $value, bool $empty_if_missing = false): string
+    public function buildProperty(string $name, mixed $value, bool $empty_if_missing = false): string
     {
         return $this->builder->buildProperty($name, $value, $empty_if_missing);
     }

@@ -4,9 +4,8 @@ namespace tests;
 
 
 use PHPUnit\Framework\TestCase;
-use Smalot\Cups\Model\Job;
-use Smalot\Cups\Model\Printer;
-use Smalot\Cups\Transport\Client;
+use Smalot\Cups\Builder\Builder;
+use Smalot\Cups\CupsException;
 
 /**
  * Class Builder
@@ -18,7 +17,7 @@ class BuilderTest extends TestCase
 
     public function testFormatStringLength()
     {
-        $builder = new \Smalot\Cups\Builder\Builder();
+        $builder = new Builder();
 
         $results = $builder->formatStringLength('bonjour');
         $this->assertEquals(chr(0).chr(7), $results);
@@ -32,14 +31,14 @@ class BuilderTest extends TestCase
         $results = $builder->formatStringLength(str_repeat('X', 65535));
         $this->assertEquals(chr(255).chr(255), $results);
 
-        $this->expectException(\Smalot\Cups\CupsException::class);
+        $this->expectException(CupsException::class);
         $this->expectExceptionMessage('Max string length for an ipp meta-information = 65535, while here 65536.');
         $builder->formatStringLength(str_repeat('X', 65535 + 1));
     }
 
     public function testFormatInteger()
     {
-        $builder = new \Smalot\Cups\Builder\Builder();
+        $builder = new Builder();
 
         $results = $builder->formatInteger(0);
         $this->assertEquals(chr(0).chr(0).chr(0).chr(0), $results);
@@ -65,23 +64,23 @@ class BuilderTest extends TestCase
 
     public function testFormatIntegerToLarge()
     {
-        $builder = new \Smalot\Cups\Builder\Builder();
-        $this->expectException(\Smalot\Cups\CupsException::class);
+        $builder = new Builder();
+        $this->expectException(CupsException::class);
         $this->expectExceptionMessage('Values must be between -2147483648 and 2147483647.');
         $builder->formatInteger(2147483647);
     }
 
     public function testFormatIntegerToSmall()
     {
-        $builder = new \Smalot\Cups\Builder\Builder();
-        $this->expectException(\Smalot\Cups\CupsException::class);
+        $builder = new Builder();
+        $this->expectException(CupsException::class);
         $this->expectExceptionMessage('Values must be between -2147483648 and 2147483647.');
         $builder->formatInteger(-2147483649);
     }
 
         public function testFormatRangeOfInteger()
     {
-        $builder = new \Smalot\Cups\Builder\Builder();
+        $builder = new Builder();
 
         $results = $builder->formatRangeOfInteger('1:5');
         $this->assertEquals(chr(0).chr(0).chr(0).chr(1).chr(0).chr(0).chr(0).chr(5), $results);
@@ -95,7 +94,7 @@ class BuilderTest extends TestCase
 
     public function testBuildProperties()
     {
-        $builder = new \Smalot\Cups\Builder\Builder();
+        $builder = new Builder();
 
         $properties = [
           'fit-to-page' => 1,
@@ -123,7 +122,7 @@ class BuilderTest extends TestCase
 
     public function testBuildProperty()
     {
-        $builder = new \Smalot\Cups\Builder\Builder();
+        $builder = new Builder();
 
         $results = $builder->buildProperty('fit-to-page', 1);
         $this->assertEquals(
@@ -217,7 +216,7 @@ class BuilderTest extends TestCase
 
     public function testGetTypeFromProperty()
     {
-        $builder = new \Smalot\Cups\Builder\Builder();
+        $builder = new Builder();
 
         $results = $builder->getTypeFromProperty('fit-to-page');
         $this->assertEquals(chr(0x44), $results['tag']);
@@ -227,7 +226,7 @@ class BuilderTest extends TestCase
         $this->assertEquals(chr(0x49), $results['tag']);
         $this->assertEquals('string', $results['build']);
 
-        $this->expectException(\Smalot\Cups\CupsException::class);
+        $this->expectException(CupsException::class);
         $this->expectExceptionMessage('Property not found: "property not defined".');
         $builder->getTypeFromProperty('property not defined');
     }

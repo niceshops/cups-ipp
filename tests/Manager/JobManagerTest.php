@@ -4,6 +4,7 @@ namespace tests;
 
 use PHPUnit\Framework\TestCase;
 use Smalot\Cups\Builder\Builder;
+use Smalot\Cups\Manager\JobManager;
 use Smalot\Cups\Manager\PrinterManager;
 use Smalot\Cups\Model\Job;
 use Smalot\Cups\Model\Printer;
@@ -17,10 +18,10 @@ use Smalot\Cups\Transport\ResponseParser;
  */
 class JobManagerTest extends TestCase
 {
-    protected $test_user = 'print-test';
-    protected $test_pass = 'print-test';
-    protected $test_host = null;
-    protected $test_uri = 'ipp://localhost:631/printers/PDF';
+    protected string $test_user = 'print-test';
+    protected string $test_pass = 'print-test';
+    protected ?string $test_host = null;
+    protected string $test_uri = 'ipp://localhost:631/printers/PDF';
 
     public function testJobManager()
     {
@@ -28,7 +29,7 @@ class JobManagerTest extends TestCase
         $client = new Client($this->test_user, $this->test_pass, ['remote_socket' => $this->test_host]);
         $response_parser = new ResponseParser();
 
-        $job_manager = new \Smalot\Cups\Manager\JobManager($builder, $client, $response_parser);
+        $job_manager = new JobManager($builder, $client, $response_parser);
         $job_manager->setCharset('utf-8');
         $job_manager->setLanguage('fr-fr');
         $job_manager->setRequestId(5);
@@ -38,7 +39,7 @@ class JobManagerTest extends TestCase
         $this->assertEquals('fr-fr', $job_manager->getLanguage());
         $this->assertEquals(5, $job_manager->getRequestId());
         $this->assertEquals('testuser', $job_manager->getUsername());
-        $this->assertEquals(5, $job_manager->getRequestId('current'));
+        $this->assertEquals(5, $job_manager->getRequestId());
         $this->assertEquals(6, $job_manager->getRequestId('new'));
     }
 
@@ -50,8 +51,8 @@ class JobManagerTest extends TestCase
         $printer = new Printer();
         $printer->setUri($this->test_uri);
 
-        $job_manager = new \Smalot\Cups\Manager\JobManager($builder, $client, $response_parser);
-        $jobs = $job_manager->getList($printer, false, 0, 'not-completed');
+        $job_manager = new JobManager($builder, $client, $response_parser);
+        $jobs = $job_manager->getList($printer, false);
         $this->assertEmpty($jobs);
     }
 
@@ -62,7 +63,7 @@ class JobManagerTest extends TestCase
         $response_parser = new ResponseParser();
         $printer = new Printer();
         $printer->setUri($this->test_uri);
-        $job_manager = new \Smalot\Cups\Manager\JobManager($builder, $client, $response_parser);
+        $job_manager = new JobManager($builder, $client, $response_parser);
 
         // Create new Job.
         $job = new Job();
@@ -92,7 +93,7 @@ class JobManagerTest extends TestCase
         $response_parser = new ResponseParser();
         $printer = new Printer();
         $printer->setUri($this->test_uri);
-        $job_manager = new \Smalot\Cups\Manager\JobManager($builder, $client, $response_parser);
+        $job_manager = new JobManager($builder, $client, $response_parser);
 
         // Create new Job.
         $job = new Job();

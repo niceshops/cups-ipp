@@ -15,7 +15,7 @@ trait RequestIdAware
     /**
      * @var int
      */
-    protected $request_id;
+    protected int $request_id;
 
     /**
      * @param string $type
@@ -36,7 +36,7 @@ trait RequestIdAware
      *
      * @return RequestIdAware
      */
-    public function setRequestId(int $request_id)
+    public function setRequestId(int $request_id): static
     {
         $this->request_id = $request_id;
 

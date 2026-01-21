@@ -13,7 +13,7 @@ interface PrinterInterface
     /**
      * @return null|string
      */
-    public function getUri();
+    public function getUri(): ?string;
 
     /**
      * @param string $uri
@@ -25,7 +25,7 @@ interface PrinterInterface
     /**
      * @return null|string
      */
-    public function getName();
+    public function getName(): ?string;
 
     /**
      * @param string $name

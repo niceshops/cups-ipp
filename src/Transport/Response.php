@@ -2,8 +2,6 @@
 
 namespace Smalot\Cups\Transport;
 
-use Psr\Http\Message\ResponseInterface;
-
 /**
  * Class Response
  *
@@ -15,27 +13,27 @@ class Response
     /**
      * @var string
      */
-    protected $ipp_version;
+    protected string $ipp_version;
 
     /**
      * @var string
      */
-    protected $status_code;
+    protected string $status_code;
 
     /**
      * @var string
      */
-    protected $request_id;
+    protected string $request_id;
 
     /**
      * @var array
      */
-    protected $body;
+    protected array $body;
 
     /**
      * @var array
      */
-    protected $values;
+    protected array $values;
 
     /**
      * Response constructor.
@@ -74,7 +72,7 @@ class Response
     /**
      * @return string
      */
-    public function getStatusMessage()
+    public function getStatusMessage(): false|string
     {
         if (!empty($this->values['operation-attributes'][0]['status-message'][0])) {
             return $this->values['operation-attributes'][0]['status-message'][0];
@@ -102,7 +100,7 @@ class Response
     /**
      * @return string|false
      */
-    public function getCharset()
+    public function getCharset(): false|string
     {
         if (!empty($this->values['operation-attributes'][0]['attributes-charset'][0])) {
             return $this->values['operation-attributes'][0]['attributes-charset'][0];
@@ -114,7 +112,7 @@ class Response
     /**
      * @return string|false
      */
-    public function getLanguage()
+    public function getLanguage(): false|string
     {
         if (!empty($this->values['operation-attributes'][0]['attributes-natural-language'][0])) {
             return $this->values['operation-attributes'][0]['attributes-natural-language'][0];
